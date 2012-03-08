@@ -1,0 +1,32 @@
+<script type="text/javascript" src="jquery-1.7.1.min.js"></script>
+<script type="text/javascript">
+  var assemblaSpaces = null;
+
+  var activeTickets = null;
+  
+  function getAssemblaSpaces() {
+  jQuery.ajax({
+  cache: true,
+  async: true,
+  dataType: 'json',
+  url: 'http://danlamanna.com/assembla.php?spaces',
+  success: function(resp) {
+  assemblaSpaces = resp;
+  }
+  });
+}
+
+  getAssemblaSpaces();
+
+  jQuery.ajax({
+  cache:true,
+async:true,
+dataType:'json',
+  url:'http://danlamanna.com/assembla.php?active_tickets',
+  success:function(resp) {
+  activeTickets = resp;
+}
+});
+
+
+</script>

@@ -1,0 +1,29 @@
+<script type="text/javascript" src="jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="chosen.jquery.min.js"></script>
+<script type="text/javascript" src="assembla.js"></script>
+<link   type="text/css" href="chosen.css" rel="stylesheet" />
+
+<script> 
+function jps_shortString( str, limit )
+{
+var body = new String( str );
+var summary = new String(str);
+summary = summary.substr( 0, summary.lastIndexOf( ' ', limit ) ) + '...';
+
+var returnString = new Object({
+body: body,
+summary: summary
+});
+
+return returnString;
+}  
+</script>
+<a id="toggle-active-tickets">Active Tickets</a>
+<div id="ticket-finder">
+<select data-placeholder="Project Name" id="assembla-spaces" style="display:none;"><option></option></select>
+</div>
+
+<div id="active-tickets" style="display:none;">
+<h3>Active Tickets</h3>
+
+</div>
