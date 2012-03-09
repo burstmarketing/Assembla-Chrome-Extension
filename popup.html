@@ -1,43 +1,19 @@
-<script type="text/javascript" src="jquery-1.7.1.min.js"></script>
-<script type="text/javascript" src="chosen.jquery.min.js"></script>
-<script type="text/javascript" src="assembla.js"></script>
-<link   type="text/css" href="chosen.css" rel="stylesheet" />
+<script type="text/javascript" src="/js/lib/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="/js/lib/chosen.jquery.min.js"></script>
+<script type="text/javascript" src="/js/assembla_spaces.js"></script>
+<script type="text/javascript" src="/js/assembla_tickets.js"></script>
+<link   type="text/css" href="/css/lib/chosen.css" rel="stylesheet" />
+<link   type="text/css" href="/css/popup.css" rel="stylesheet" />
 
-<style>
-body { font-family: Arial, Helvetica, 'Liberation Sans', FreeSans, sans-serif; font-size:12px; padding-top:12px;}
-
-.space-link { padding-right:10px; padding-top:10px; }
-
-#space-links { margin-top:8px; }
-
-.first-space-link { padding-left:20px; }
-</style>
-
-<script> 
-function jps_shortString( str, limit )
-{
-var body = new String( str );
-var summary = new String(str);
-summary = summary.substr( 0, summary.lastIndexOf( ' ', limit ) ) + '...';
-
-var returnString = new Object({
-body: body,
-summary: summary
-});
-
-return returnString;
-}  
-</script>
 <div id="ticket-finder" style="margin-bottom:18px;">
-<select data-placeholder="Project Name" id="assembla-spaces" style="display:none;"><option></option></select>
-<div id="space-links" style="display:none;">
-<a class="space-link first-space-link" data-urlkey="wiki" id="wiki-link" href="#">Wiki</a>
-<a class="space-link"  data-urlkey="files" id="files-link" href="#">Files</a>
-<a class="space-link" data-urlkey="tickets" id="tickets-link"  href="#">Tickets</a>
-<a class="space-link" data-urlkey="time" id="time-link" href="#">Time</a>
-</div>
-</div>
+  <select data-placeholder="Project Name" id="assembla-spaces" style="display:none;">
+    <option></option>
+  </select>
 
-<div id="active-tickets" style="display:none;">
-<h3>Active Tickets</h3>
+  <div id="space-links" style="display:none;">
+    <a class="space-link first-space-link" data-urlkey="wiki" id="wiki-link" href="#">Wiki</a>
+    <a class="space-link"  data-urlkey="files" id="files-link" href="#">Files</a>
+    <a class="space-link" data-urlkey="tickets" id="tickets-link"  href="#">Tickets</a>
+    <a class="space-link" data-urlkey="time" id="time-link" href="#">Time</a>
+  </div>
 </div>

@@ -3,9 +3,9 @@
   "version" : "1.0",
   "description" : "Allows you to manage basic Assembla functionality from anywhere in Chrome.",
   "permissions": [ "tabs", "http://*/*", "https://*/*" ],
-  "icons": { "16": "assembla.png", "48": "assembla.png", "128": "assembla.png" },
+  "icons": { "16": "img/assembla.png", "48": "img/assembla.png", "128": "img/assembla.png" },
   "browser_action": {
-    "default_icon": "assembla.png",
+    "default_icon": "img/assembla.png",
     "default_popup": "popup.html",
     "default_title": "Assembla Utilities"
   },
