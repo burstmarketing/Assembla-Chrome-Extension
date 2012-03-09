@@ -1,16 +1,19 @@
 jQuery(document).ready(function() {
 
-    var lastChosenSpaceId   = null;
-    var lastChosenTicketNum = null;
+			   jQuery('.space-link').click(function() {
+							   chrome.tabs.create({url: jQuery(this).attr('href')});
+						       });
+
 
     var assemblaSpaces = chrome.extension.getBackgroundPage().assemblaSpaces;
 
     jQuery.each(assemblaSpaces, function(i, item) {
-	var selected = (i == lastChosenSpaceId) ? ' selected' : '';
 
-	jQuery('#assembla-spaces').append('<option value="' + i + '"' + selected + '>' + item + '</option>');
+
+	jQuery('#assembla-spaces').append('<option value="' + i + '">' + item + '</option>');
     }); 
     
+
     jQuery('#assembla-spaces').show().chosen({no_results_text: "No projects found matching "});
 
 
@@ -33,15 +36,31 @@ jQuery(document).ready(function() {
     // On the selection of a space, load the appropriate tickets    
     jQuery('#assembla-spaces').live('change', function() {
 	jQuery('#assembla-tickets').remove();
-
-	lastChosenSpaceId = jQuery('#assembla-spaces option:selected').val();
 	
-	jQuery.ajax({
-	    cache: true,
+					jQuery.ajax({
+							cache: true,
 	    async: true,
 	    dataType: 'json',
 	    url: 'http://danlamanna.com/assembla.php?tickets=true&space_id=' + jQuery('#assembla-spaces option:selected').val(),
-	    success: function(resp) {
+			success: function(resp) {
+
+    jQuery.ajax({
+	 url: 'http://danlamanna.com/assembla.php?get_space_urls=true&space_id=' + jQuery('#assembla-spaces option:selected').val(),
+	    cache: true, 
+           async:true,
+        dataType:'json',
+    success: function(respo) {		
+	jQuery('.space-link').each(function() {
+	   jQuery(this).attr('href', respo[jQuery(this).data('urlkey')]);
+				   });
+	    
+
+		    jQuery('#space-links').show();
+}
+});
+
+
+
 		var ticketsSelect = '<select id="assembla-tickets">';
 		
 		jQuery.each(resp, function(i, item) {
