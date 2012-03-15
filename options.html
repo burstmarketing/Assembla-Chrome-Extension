@@ -1,28 +1,43 @@
+<html>
+<head>
 <script type="text/javascript" src="/js/lib/jquery-1.7.1.min.js"></script>
 
 <script>
-  jQuery(document).ready(function() {
+    jQuery(document).ready(function() {
 
-  if (localStorage['assembla_username'] != undefined) {
-  jQuery('input[name=assembla_username]').val(localStorage['assembla_username']);
-}
+	if (localStorage['assembla_username'] != undefined) {
+	    jQuery('input[name=assembla_username]').val(localStorage['assembla_username']);
+	}
 
- if (localStorage['assembla_password'] != undefined) {
-  jQuery('input[name=assembla_password]').val(localStorage['assembla_password']);
-}
+	if (localStorage['assembla_password'] != undefined) {
+	    jQuery('input[name=assembla_password]').val(localStorage['assembla_password']);
+	}
+
+	if (localStorage['assembla_api'] != undefined) {
+	    jQuery('input[name=assembla_api]').val(localStorage['assembla_api']);
+	}
 
 
-  jQuery('#save-credentials').click(function() {
+	jQuery('#save-credentials').click(function() {
 
-  localStorage['assembla_username'] = jQuery('input[name=assembla_username]').val();
-  localStorage['assembla_password'] = jQuery('input[name=assembla_password]').val();
+	    localStorage['assembla_username'] = jQuery('input[name=assembla_username]').val();
+	    localStorage['assembla_password'] = jQuery('input[name=assembla_password]').val();
+	    localStorage['assembla_api'] = jQuery('input[name=assembla_api]').val();
 
-  });
+	});
 
-  });
+    });
 </script>
+</head>
+<body>
+    <ul>
+    <li><label>Assembla Username:</label></li>
+    <li><input type="text" name="assembla_username" /></li>
+    <li><label>Assembla Password:</label></li>
+    <li><input type="password" name="assembla_password" /></li>
+    <li><label>Assembla API:</label></li>
+    <li><input type="text" name="assembla_api" /></li>
 
-Assembla Username: <input type="text" name="assembla_username" /><br />
-Assembla Password: <input type="password" name="assembla_password" /><br />
-<input type="submit" id="save-credentials" value="Save" />
-
+    <li><input type="submit" id="save-credentials" value="Save" /></li>
+    </ul>
+</body>

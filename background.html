@@ -1,33 +1,91 @@
 <script type="text/javascript" src="/js/lib/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="/js/lib/config.js"></script>
 <script type="text/javascript">
-  var assemblaSpaces = null;
 
-  var activeTickets = null;
-  
-  function getAssemblaSpaces() {
-  jQuery.ajax({
-  cache: true,
-  async: true,
-  dataType: 'json',
-  url: 'http://danlamanna.com/assembla.php?spaces',
-  success: function(resp) {
-  assemblaSpaces = resp;
-  }
-  });
-}
+var AssemblaApp = {
+    _data : {},
 
-  getAssemblaSpaces();
+    _setData : function (key,value){
+	this._data[key] = value;
+    },
 
-  jQuery.ajax({
-  cache:true,
-async:true,
-dataType:'json',
-  url:'http://danlamanna.com/assembla.php?active_tickets',
-  success:function(resp) {
-  activeTickets = resp;
-}
-});
+    getData : function (key){
+	if( this._data[key] ){
+	    return this._data[key];
+	}
+	return false;
+    },
+
+    getSpaces : function(){
+	if( this.getData("activeSpaces") ){
+	    return this.getData("activeSpaces");
+	}
+	return [];
+    },
+
+    getTickets : function(){
+	if( this.getData("assemblaTickets") ){
+	    return this.getData("activeTickets");
+	}
+	return [];
+    },
+
+    _getUsername : function () {
+	return localStorage['assembla_username'];
+    },
+
+    _getPassword : function () {
+	return localStorage['assembla_password'];
+    },
+
+    _getService : function ( service_title ){
+	if( AssemblaApi.services[service_title] ){
+	    return AssemblaApi.services[service_title];
+	} else {
+	    return { 'uri' :  '',
+		     'type' : '' };
+	}
+    },
 
 
+    _getAPIUrl : function(){
+	return localStorage['assembla_api'];
+    },
 
+    _callService : function( service_title, callback ){
+	jQuery.ajax({
+	    cache: true,
+	    async: true,
+	    username: this._getUsername(),
+	    password: this._getPassword(),
+	    dataType: 'json',
+	    url: this._getAPIUrl() + "/" + this._getService(service_title).uri,
+	    success: callback
+
+	});
+
+    },
+
+
+    getAssemblaSpaces : function() {
+	this._callService('my_spaces_list',function(resp) {
+	    console.log(resp);
+	    this._setData('activeSpaces', resp);
+	}.bind(this));
+    },
+
+    getAssemblaTickets : function(){
+	this._callService('my_spaces_list',function(resp) {
+	    console.log(resp);
+	    this._setData('activeTickets', resp);
+	}.bind(this));
+    },
+
+    run : function() {
+	this.getAssemblaSpaces();
+//	this.getAssemblaTickets();
+    }
+};
+
+AssemblaApp.run();
 </script>
