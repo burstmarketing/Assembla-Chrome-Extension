@@ -5,14 +5,15 @@ jQuery(document).ready(function() {
 
    // When clicking a space link, (wiki, files, time, etc) - Open a new tab for it
    jQuery('.space-link').click(function() {
-	   chrome.tabs.create({url: jQuery(this).attr('href')});
+       chrome.tabs.create({url: jQuery(this).attr('href')});
+       return false;
    });
 
    // Grab the spaces in assembla, retrieved from the background page.
 
 
    // Populate select for spaces with assemblaSpaces
-    jQuery.each(AssemblaApp.getSpaces(), function(i, item) {
+    jQuery.each(AssemblaApp.getActiveSpaces(), function(i, item) {
 	jQuery('#assembla-spaces').append('<option value="' + item.id + '">' + item.name + '</option>');
     });
 
@@ -22,12 +23,19 @@ jQuery(document).ready(function() {
    // On the selection of a space, load the appropriate tickets
    jQuery('#assembla-spaces').live('change', function() {
        var space_id = jQuery("#assembla-spaces option:selected").val();
-       jQuery('#assembla-tickets').remove();
+       // chosen will add the _chzn to the id
+       jQuery('#assembla-tickets_chzn').remove();
 
 
        AssemblaApp.getActiveTicketsForSpace( space_id, function(data){
 
 	   // add stuff for links etc.
+	   var space_id = jQuery("#assembla-spaces option:selected").val();
+	   jQuery('#space-links').show();
+
+	   jQuery('.space-link').each(function() {
+	       jQuery(this).attr('href', AssemblaApp.getSpaceBaseUrl( AssemblaApp.getWikiName(space_id) + "/" + jQuery(this).data('urlkey')));
+	   });
 
 	   var ticketSelect = jQuery('<select id="assembla-tickets">');
 
@@ -62,12 +70,8 @@ jQuery(document).ready(function() {
                     async: true,
                     dataType: 'json',
                     success: function(respo) {
-	               jQuery('.space-link').each(function() {
-	                   jQuery(this).attr('href', respo[jQuery(this).data('urlkey')]);
-		       });
-
-		       jQuery('#space-links').show();
                     }
+respo[]);
                 });
 
           }

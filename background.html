@@ -16,7 +16,7 @@ var AssemblaApp = {
 	return false;
     },
 
-    getSpaces : function(){
+    getActiveSpaces : function(){
 	if( this.getData("activeSpaces") ){
 	    return this.getData("activeSpaces");
 	}
@@ -91,12 +91,12 @@ var AssemblaApp = {
 	this._ajaxCall( 'getconfig', function(data){
 	    console.log(data);
 	    this.AssemblaAPI = data;
-	    this.bootstrapAssemblaSpaces();
+	    this.bootstrapActiveSpaces();
 	});
     },
 
 
-    bootstrapAssemblaSpaces : function() {
+    bootstrapActiveSpaces : function() {
 	this._callService('my_spaces_list',{},function(resp) {
 	    console.log(resp);
 	    this._setData('activeSpaces', resp);
@@ -111,6 +111,17 @@ var AssemblaApp = {
 	this._callService('custom_ticket_report', args, callback );
     },
 
+    getSpaceBaseUrl : function( uri ){
+	if( !uri ) { uri = ''; }
+	if( this.AssemblaAPI.defaults.url ){
+	    return this.AssemblaAPI.defaults.url + "/spaces/" + uri;
+	}
+	return '';
+    },
+
+    getWikiName : function( space_id ){
+	return _.filter( this.getActiveSpaces(), function(item) { return item.id == space_id })[0].wiki_name;
+    },
 
     getSpace : function( space_id, callback ){
 	var args = { "id" : space_id };
