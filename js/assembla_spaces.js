@@ -5,7 +5,7 @@ jQuery(document).ready(function() {
 
    // When clicking a space link, (wiki, files, time, etc) - Open a new tab for it
    jQuery('.space-link').click(function() {
-       chrome.tabs.create({url: jQuery(this).attr('href')});
+       chrome.tabs.create({url: "http://" + jQuery(this).attr('href')});
        return false;
    });
 
@@ -18,13 +18,13 @@ jQuery(document).ready(function() {
     });
 
    // Implementing chosen for spaces
-   jQuery('#assembla-spaces').show().chosen({no_results_text: "No projects found matching "});
+   jQuery('#assembla-spaces').show()
 
    // On the selection of a space, load the appropriate tickets
    jQuery('#assembla-spaces').live('change', function() {
        var space_id = jQuery("#assembla-spaces option:selected").val();
-       // chosen will add the _chzn to the id
-       jQuery('#assembla-tickets_chzn').remove();
+
+       jQuery('#assembla-tickets').remove();
 
 
        AssemblaApp.getActiveTicketsForSpace( space_id, function(data){
@@ -33,50 +33,54 @@ jQuery(document).ready(function() {
 	   var space_id = jQuery("#assembla-spaces option:selected").val();
 	   jQuery('#space-links').show();
 
+
 	   jQuery('.space-link').each(function() {
-	       jQuery(this).attr('href', AssemblaApp.getSpaceBaseUrl( AssemblaApp.getWikiName(space_id) + "/" + jQuery(this).data('urlkey')));
+		   jQuery(this).attr('href', AssemblaApp.getSpaceBaseUrl( AssemblaApp.getWikiName(space_id) + "/" + jQuery(this).data('urlkey')));
 	   });
 
-	   var ticketSelect = jQuery('<select id="assembla-tickets">');
+	   if (data.length) {
+	       var ticketSelect = jQuery('<select id="assembla-tickets">');
 
-	   jQuery.each(data, function(i, item) {
-	       ticketSelect.append( jQuery('<option>').val( item.id)
-				    .text( item.number + ': ' + item.summary) );
-	   });
+	       jQuery.each(data, function(i, item) {
+		   ticketSelect.append( jQuery('<option>').val( item.id)
+					.text( item.number + ': ' + item.summary) );
+	       });
 
-	   // Only add it if there are options
-	   if (ticketSelect.find("option")) {
-	       jQuery('body').append(ticketSelect);
-	       jQuery('#assembla-tickets').chosen({no_results_text: "No tickets found matching "});
+	       // Only add it if there are options
+
+	       jQuery('body').append(ticketSelect).append("<a class='gototicket' href='#'>Go to Ticket</a>")
 	   } else {
 	       jQuery('body').append( jQuery("<p id='assembla-tickets'>No Active Tickets for this Space</p>") );
 	   }
-
-
        });
+   }); // jQuery('#assembla-spaces').live('change')
 
-/*
-        // Loads the tickets for space_id
-        jQuery.ajax({
-	    cache: true,
-	    async: true,
-	    dataType: 'json',
-	    url: 'http://danlamanna.com/assembla.php?tickets=true&space_id=' + jQuery('#assembla-spaces option:selected').val(),
-	    success: function(resp) {
-                // Get the space urls, wiki, files, etc
-                jQuery.ajax({
-	            url: 'http://danlamanna.com/assembla.php?get_space_urls=true&space_id=' + jQuery('#assembla-spaces option:selected').val(),
-	            cache: true,
-                    async: true,
-                    dataType: 'json',
-                    success: function(respo) {
-                    }
-respo[]);
-                });
 
-          }
-        }); // jQuery.ajax
-  */
-	}); // jQuery('#assembla-spaces').live('change')
+
+
+    jQuery('#assembla-tickets').live('change', function() {
+	var space_id = jQuery('#assembla-spaces option:selected').val();
+	var ticketid = jQuery('#assembla-tickets option:selected').val();
+
+	chrome.tabs.create({url: "http://" + AssemblaApp.getSpaceBaseUrl( AssemblaApp.getWikiName(space_id) ) + "/tickets/" + AssemblaApp.getTicketNumber(ticketid) });
+
+	return false;
+    });
+
+    jQuery("body").delegate("a.gototicket", "click", function(){
+
+	var space_id = jQuery('#assembla-spaces option:selected').val();
+	var ticketid = jQuery('#assembla-tickets option:selected').val();
+
+	chrome.tabs.create({url: "http://" + AssemblaApp.getSpaceBaseUrl( AssemblaApp.getWikiName(space_id) ) + "/tickets/" + AssemblaApp.getTicketNumber(ticketid) });
+
+	return false;
+
+
+
+    });
+
+
+
 });
 

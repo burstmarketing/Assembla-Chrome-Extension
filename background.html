@@ -23,8 +23,8 @@ var AssemblaApp = {
 	return [];
     },
 
-    getTickets : function(){
-	if( this.getData("assemblaTickets") ){
+    getActiveTickets : function(){
+	if( this.getData("activeTickets") ){
 	    return this.getData("activeTickets");
 	}
 	return [];
@@ -89,7 +89,6 @@ var AssemblaApp = {
 
     loadAssemblaAPI : function(){
 	this._ajaxCall( 'getconfig', function(data){
-	    console.log(data);
 	    this.AssemblaAPI = data;
 	    this.bootstrapActiveSpaces();
 	});
@@ -98,7 +97,6 @@ var AssemblaApp = {
 
     bootstrapActiveSpaces : function() {
 	this._callService('my_spaces_list',{},function(resp) {
-	    console.log(resp);
 	    this._setData('activeSpaces', resp);
 	});
     },
@@ -108,7 +106,13 @@ var AssemblaApp = {
 	// (8 : All user's active tickets)
 	var args = { "space_id" : space_id,
 		     "report_id" : 8 };
-	this._callService('custom_ticket_report', args, callback );
+
+
+
+	this._callService('ticket_report', args, function(data) {
+	    this._setData("activeTickets", data );
+	    callback(data);
+	});
     },
 
     getSpaceBaseUrl : function( uri ){
@@ -121,6 +125,10 @@ var AssemblaApp = {
 
     getWikiName : function( space_id ){
 	return _.filter( this.getActiveSpaces(), function(item) { return item.id == space_id })[0].wiki_name;
+    },
+
+    getTicketNumber : function( ticket_id ){
+	return _.filter( this.getActiveTickets(), function(item) { return item.id == ticket_id })[0].number;
     },
 
     getSpace : function( space_id, callback ){
