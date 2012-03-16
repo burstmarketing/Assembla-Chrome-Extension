@@ -23,6 +23,30 @@ jQuery(document).ready(function() {
    jQuery('#assembla-spaces').live('change', function() {
 	jQuery('#assembla-tickets').remove();
 
+
+       AssemblaApp.getActiveTicketsForSpace( jQuery("#assembla-spaces option:selected").val(), function(data){
+
+	   // add stuff for links etc.
+
+	   var ticketSelect = jQuery('<select id="assembla-tickets">');
+
+	   jQuery.each(data, function(i, item) {
+	       ticketSelect.append( jQuery('<option>').val( item.id)
+				    .text( item.number + ': ' + item.summary) );
+	   });
+
+	   // Only add it if there are options
+	   if (ticketSelect.find("option")) {
+	       jQuery('body').append(ticketSelect);
+	       jQuery('#assembla-tickets').chosen({no_results_text: "No tickets found matching "});
+	   } else {
+	       jQuery('body').append( jQuery("<p id='assembla-tickets'>No Active Tickets for this Space</p>") );
+	   }
+
+
+       });
+
+/*
         // Loads the tickets for space_id
         jQuery.ajax({
 	    cache: true,
@@ -45,24 +69,9 @@ jQuery(document).ready(function() {
                     }
                 });
 
-                // Start building the select box with tickets
-		var ticketsSelect = '<select id="assembla-tickets">';
-
-		jQuery.each(resp, function(i, item) {
-		    var excerpt = item;
-		    ticketsSelect += '<option value="' + i + '">' + i + ': ' + excerpt + '</option>';
-		});
-
-		ticketsSelect += '</select>';
-
-		// Only add it if there are options
-		if (ticketsSelect.indexOf('option') != -1) {
-		    jQuery('body').append(ticketsSelect);
-
-		    jQuery('#assembla-tickets').chosen({no_results_text: "No tickets found matching "});
-		}
           }
         }); // jQuery.ajax
-   }); // jQuery('#assembla-spaces').live('change')
+  */
+	}); // jQuery('#assembla-spaces').live('change')
 });
 

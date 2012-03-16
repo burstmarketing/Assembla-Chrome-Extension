@@ -172,7 +172,7 @@ var AssemblaApi = {
 		},
 
 		"custom_ticket_report" : {
-			"uri" : "spaces/${space_id}/tickets/custom_report/${report_id}",
+		        "uri" : "spaces/${space_id}/tickets/report/${report_id}?ureport=0",
 			"type" : "GET",
 			"classname" : "Assembla_Collection_Ticket"
 		},
