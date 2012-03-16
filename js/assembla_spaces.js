@@ -21,10 +21,11 @@ jQuery(document).ready(function() {
 
    // On the selection of a space, load the appropriate tickets
    jQuery('#assembla-spaces').live('change', function() {
-	jQuery('#assembla-tickets').remove();
+       var space_id = jQuery("#assembla-spaces option:selected").val();
+       jQuery('#assembla-tickets').remove();
 
 
-       AssemblaApp.getActiveTicketsForSpace( jQuery("#assembla-spaces option:selected").val(), function(data){
+       AssemblaApp.getActiveTicketsForSpace( space_id, function(data){
 
 	   // add stuff for links etc.
 

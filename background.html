@@ -1,6 +1,5 @@
 <script type="text/javascript" src="/js/lib/jquery-1.7.1.min.js"></script>
 <script type="text/javascript" src="/js/lib/underscore-min.js"></script>
-<script type="text/javascript" src="/js/lib/config.js"></script>
 <script type="text/javascript">
 
 var AssemblaApp = {
@@ -40,14 +39,13 @@ var AssemblaApp = {
     },
 
     _getService : function ( service_title ){
-	if( AssemblaApi.services[service_title] ){
-	    return AssemblaApi.services[service_title];
+	if( this.AssemblaAPI.services[service_title] ){
+	    return this.AssemblaAPI.services[service_title];
 	} else {
 	    return { 'uri' :  '',
 		     'type' : '' };
 	}
     },
-
 
     _getAPIUrl : function(){
 	return localStorage['assembla_api'];
@@ -66,7 +64,7 @@ var AssemblaApp = {
 
     },
 
-    _callService : function( service_title, args, callback ){
+    _ajaxCall : function( uri, callback ){
 
 	callback = _.bind(callback, this);
 
@@ -76,7 +74,7 @@ var AssemblaApp = {
 	    username: this._getUsername(),
 	    password: this._getPassword(),
 	    dataType: 'json',
-	    url: this._getAPIUrl() + "/" + this._processUri( this._getService(service_title).uri, args ),
+	    url: this._getAPIUrl() + "/" + uri,
 	    success: callback
 
 	});
@@ -84,8 +82,21 @@ var AssemblaApp = {
     },
 
 
-    bootstrapAssemblaSpaces : function() {
+    _callService : function( service_title, args, callback ){
+	this._ajaxCall(this._processUri( this._getService(service_title).uri, args ), callback);
+    },
 
+
+    loadAssemblaAPI : function(){
+	this._ajaxCall( 'getconfig', function(data){
+	    console.log(data);
+	    this.AssemblaAPI = data;
+	    this.bootstrapAssemblaSpaces();
+	});
+    },
+
+
+    bootstrapAssemblaSpaces : function() {
 	this._callService('my_spaces_list',{},function(resp) {
 	    console.log(resp);
 	    this._setData('activeSpaces', resp);
@@ -97,13 +108,17 @@ var AssemblaApp = {
 	// (8 : All user's active tickets)
 	var args = { "space_id" : space_id,
 		     "report_id" : 8 };
-
 	this._callService('custom_ticket_report', args, callback );
+    },
 
+
+    getSpace : function( space_id, callback ){
+	var args = { "id" : space_id };
+	this._callService('show_space_by_id', args, callback );
     },
 
     run : function() {
-	this.bootstrapAssemblaSpaces();
+	this.loadAssemblaAPI();
 //	this.getAssemblaTickets();
     }
 };
