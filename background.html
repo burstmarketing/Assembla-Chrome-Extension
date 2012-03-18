@@ -96,23 +96,23 @@ var AssemblaApp = {
 
 
     bootstrapActiveSpaces : function() {
-	this._callService('my_spaces_list',{},function(resp) {
+
+	this._ajaxCall('activetickets',function(resp) {
+	    console.log(resp);
 	    this._setData('activeSpaces', resp);
+	    this._setData('activeTickets', _.flatten(_.map(AssemblaApp.getActiveSpaces(), function(space) { return space.active_tickets; })));
 	});
     },
 
 
-    getActiveTicketsForSpace : function( space_id, callback ){
-	// (8 : All user's active tickets)
-	var args = { "space_id" : space_id,
-		     "report_id" : 8 };
-
-
-
-	this._callService('ticket_report', args, function(data) {
-	    this._setData("activeTickets", data );
-	    callback(data);
-	});
+    getActiveTicketsForSpace : function( space_id ){
+	var space = this.getSpace(space_id);
+	if( space ){
+	    this._setData('activeTickets', space.active_tickets);
+	    return space.active_tickets;
+	} else {
+	    return [];
+	}
     },
 
     getSpaceBaseUrl : function( uri ){
@@ -121,6 +121,9 @@ var AssemblaApp = {
 	    return this.AssemblaAPI.defaults.url + "/spaces/" + uri;
 	}
 	return '';
+    },
+    getSpaceName : function( space_id ){
+	return _.filter( this.getActiveSpaces(), function(item) { return item.id == space_id })[0].name;
     },
 
     getWikiName : function( space_id ){
@@ -132,13 +135,11 @@ var AssemblaApp = {
     },
 
     getSpace : function( space_id, callback ){
-	var args = { "id" : space_id };
-	this._callService('show_space_by_id', args, callback );
+	return _.filter( this.getActiveSpaces(), function(item) { return item.id == space_id })[0];
     },
 
     run : function() {
 	this.loadAssemblaAPI();
-//	this.getAssemblaTickets();
     }
 };
 

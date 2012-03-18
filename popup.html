@@ -1,22 +1,37 @@
 <script type="text/javascript" src="/js/lib/jquery-1.7.1.min.js"></script>
-<script type="text/javascript" src="/js/lib/chosen.jquery.min.js"></script>
+<script type="text/javascript" src="/js/lib/jquery-ui-1.8.18.custom.min.js"></script>
 <script type="text/javascript" src="/js/lib/underscore-min.js"></script>
 <script type="text/javascript" src="/js/assembla_spaces.js"></script>
-
-<link   type="text/css" href="/css/lib/chosen.css" rel="stylesheet" />
+<script type="text/javascript">
+  jQuery(document).ready(function(){
+      jQuery("#tabs").tabs();
+  });
+</script>
+<link   type="text/css" href="/css/lib/jquery-ui-1.8.18.custom.css" rel="stylesheet" />
 <link   type="text/css" href="/css/popup.css" rel="stylesheet" />
 
+<div id="tabs">
+<ul>
+  <li><a href="#tabs-1">Tickets</a></li>
+  <li><a href="#tabs-2">Spaces</a></li>
+</ul>
+<div id="tabs-1">
+  <div id="ticket-div" style="margin-bottom:18px;"></div>
+</div>
+<div id="tabs-2">
+  <div id="ticket-finder" style="margin-bottom:18px;">
+    <select data-placeholder="Project Name" id="assembla-spaces" style="display:none;">
+      <option></option>
+    </select>
 
+    <div id="space-links" style="display:none;">
+      <a class="space-link first-space-link" data-urlkey="wiki" id="wiki-link" href="#">Wiki</a>
+      <a class="space-link"  data-urlkey="documents" id="files-link" href="#">Files</a>
+      <a class="space-link" data-urlkey="tickets" id="tickets-link"  href="#">Tickets</a>
+      <a class="space-link" data-urlkey="time_entries" id="time-link" href="#">Time</a>
+    </div>
+  </div>
+  <div id="ticket-div" style="margin-bottom:18px;">
 
-<div id="ticket-finder" style="margin-bottom:18px;">
-  <select data-placeholder="Project Name" id="assembla-spaces" style="display:none;">
-    <option></option>
-  </select>
-
-  <div id="space-links" style="display:none;">
-    <a class="space-link first-space-link" data-urlkey="wiki" id="wiki-link" href="#">Wiki</a>
-    <a class="space-link"  data-urlkey="files" id="files-link" href="#">Files</a>
-    <a class="space-link" data-urlkey="tickets" id="tickets-link"  href="#">Tickets</a>
-    <a class="space-link" data-urlkey="time" id="time-link" href="#">Time</a>
   </div>
 </div>
