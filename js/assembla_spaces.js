@@ -17,10 +17,12 @@ jQuery(document).ready(function() {
 	var t = _.extend({}, ticket);
 	
 	t.date_string = "";
+	t.date_class = '';
 	if( ticket.due_date ){
 	    var d = new Date( ticket.due_date );
+	    var current_date = new Date();
 	    t.date_string = ( parseInt(d.getUTCMonth()) + 1 ) + "/" + d.getUTCDate() + "/" + d.getUTCFullYear();
-	    
+	    t.date_class = (d < current_date) ? "past_due" : '';
 	}
 	
 	t.estimate = ( parseInt(ticket.estimate) ) ? ticket.estimate : "";

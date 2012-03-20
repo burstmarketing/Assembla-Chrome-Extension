@@ -34,3 +34,6 @@ span.ticket-due {
     padding-left:5px;
     display:block;
 }
+span.past_due {
+    color : #d42020
+}

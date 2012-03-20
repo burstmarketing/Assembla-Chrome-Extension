@@ -96,12 +96,37 @@ var AssemblaApp = {
     },
 
 
+    _sortTicketsByDateAsc : function (ticket1, ticket2 ){
+
+	if(ticket1.due_date === undefined && ticket2.due_date == undefined){
+	    return 1;
+	} else if(ticket1.due_date === undefined){
+	    return 1;
+	} else if(ticket2.due_date === undefined){
+	    return -1;
+	} else {
+
+	    var date1 = new Date(ticket1.due_date);
+	    var date2 = new Date(ticket2.due_date);
+	    if( date1 == date2 ){
+		return 0;
+	    } else if( date1 > date2 ) {
+		return 1;
+	    } else {
+		return -1;
+	    }
+	}
+    },
+
     bootstrapActiveSpaces : function() {
 
 	this._ajaxCall('activetickets',function(resp) {
 	    console.log(resp);
 	    this._setData('activeSpaces', resp);
-	    this._setData('activeTickets', _.flatten(_.map(AssemblaApp.getActiveSpaces(), function(space) { return space.active_tickets; })));
+	    
+	    var tickets = _.flatten(_.map(AssemblaApp.getActiveSpaces(), function(space) { return space.active_tickets; } ) );
+	    tickets.sort( this._sortTicketsByDateAsc );
+	    this._setData('activeTickets', tickets);
 	});
     },
 

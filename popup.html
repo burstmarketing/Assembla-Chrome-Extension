@@ -5,11 +5,10 @@
 
 
 <script type="text/template" id="ticket-accordion">
-  
   <h3>
     <a href="#">
       <span class='ticket-desc'><%= ticket.number %>: <%= ticket.summary %></span>
-      <span class='ticket-due'><%= ticket.date_string %></span>
+      <span class='ticket-due <%= ticket.date_class %>'><%= ticket.date_string %></span>
       <span class='ticket-est'><%= ticket.estimate %></span>
       <span style='display:block;clear:both;'></span>
     </a>
