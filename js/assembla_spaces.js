@@ -10,16 +10,30 @@ jQuery(document).ready(function() {
 	chrome.tabs.create({url: "http://" + jQuery(this).attr('href')});
 	return false;
     });
-    debugger;
-    _.each( AssemblaApp.getActiveTickets(), function(ticket) {
-	var h3 = jQuery("<h3>");
-	var div = jQuery("<div>");
-	h3.append(jQuery("<a href='#'>" + ticket.number + ": " + ticket.summary + "</a>") );                         
-	div.append(jQuery("<span>" + AssemblaApp.getSpaceName(ticket.space_id) + "</span>") );
-        jQuery("#tabs-1 #ticket-div").append(h3).append(div);
+
+
+    
+    _.each( AssemblaApp.getActiveTickets(), function(ticket) {	
+	var t = _.extend({}, ticket);
+	
+	t.date_string = "";
+	if( ticket.due_date ){
+	    var d = new Date( ticket.due_date );
+	    t.date_string = ( parseInt(d.getUTCMonth()) + 1 ) + "/" + d.getUTCDate() + "/" + d.getUTCFullYear();
+	    
+	}
+	
+	t.estimate = ( parseInt(ticket.estimate) ) ? ticket.estimate : "";
+	
+	var tmplt = _.template(jQuery("#ticket-accordion").html());
+	jQuery("#tabs-1 #ticket-div").append( tmplt({ticket : t}) );
+
     });
 			   
-    jQuery("#tabs-1 #ticket-div").accordion();
+    jQuery("#tabs-1 #ticket-div").accordion({collapsible: true, 
+					     autoHeight: false, 
+					     active: false });
+
 			   
    // Populate select for spaces with assemblaSpaces
     jQuery.each(AssemblaApp.getActiveSpaces(), function(i, item) {

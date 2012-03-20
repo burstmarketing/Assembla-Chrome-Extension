@@ -2,7 +2,7 @@ body {
     font-family: Arial, Helvetica, 'Liberation Sans', FreeSans, sans-serif;
     font-size:12px;
     padding-top:12px;
-    width: 400px;
+    width: 600px;
 }
 
 .space-link {
@@ -16,4 +16,21 @@ body {
 
 .first-space-link {
     padding-left:20px;
+}
+
+
+span.ticket-desc {
+    float:left;
+    display:block;
+}
+
+span.ticket-est {
+    float:right;
+    display:block;
+}
+
+span.ticket-due {
+    float:right;
+    padding-left:5px;
+    display:block;
 }

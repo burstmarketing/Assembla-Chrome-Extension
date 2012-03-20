@@ -1,7 +1,23 @@
 <script type="text/javascript" src="/js/lib/jquery-1.7.1.min.js"></script>
 <script type="text/javascript" src="/js/lib/jquery-ui-1.8.18.custom.min.js"></script>
-<script type="text/javascript" src="/js/lib/underscore-min.js"></script>
+<script type="text/javascript" src="/js/lib/underscore.js"></script>
 <script type="text/javascript" src="/js/assembla_spaces.js"></script>
+
+
+<script type="text/template" id="ticket-accordion">
+  
+  <h3>
+    <a href="#">
+      <span class='ticket-desc'><%= ticket.number %>: <%= ticket.summary %></span>
+      <span class='ticket-due'><%= ticket.date_string %></span>
+      <span class='ticket-est'><%= ticket.estimate %></span>
+      <span style='display:block;clear:both;'></span>
+    </a>
+  </h3>
+  <div><span><%= AssemblaApp.getSpaceName(ticket.space_id) %></span></div>
+</script>
+
+
 <script type="text/javascript">
   jQuery(document).ready(function(){
       jQuery("#tabs").tabs();

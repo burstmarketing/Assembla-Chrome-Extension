@@ -109,7 +109,6 @@ var AssemblaApp = {
     getActiveTicketsForSpace : function( space_id ){
 	var space = this.getSpace(space_id);
 	if( space ){
-	    this._setData('activeTickets', space.active_tickets);
 	    return space.active_tickets;
 	} else {
 	    return [];
