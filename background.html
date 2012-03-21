@@ -1,9 +1,15 @@
 <script type="text/javascript" src="/js/lib/jquery-1.7.1.min.js"></script>
-<script type="text/javascript" src="/js/lib/underscore-min.js"></script>
+<script type="text/javascript" src="/js/lib/underscore.js"></script>
+<script type="text/javascript" src="/js/lib/backbone.js"></script>
 <script type="text/javascript">
 
 var AssemblaApp = {
+    Models : {},
+    Collections : {},
+    Views : {},
+    dispatcher : {},
     _data : {},
+    
 
     _setData : function (key,value){
 	this._data[key] = value;
@@ -14,6 +20,10 @@ var AssemblaApp = {
 	    return this._data[key];
 	}
 	return false;
+    },
+
+    hasData : function( key ){
+	return ( this._data[key] ) ? true : false;
     },
 
     getActiveSpaces : function(){
@@ -91,6 +101,7 @@ var AssemblaApp = {
     loadAssemblaAPI : function(){
 	this._ajaxCall( 'getconfig', function(data){
 	    this.AssemblaAPI = data;
+	    
 	    this.bootstrapActiveSpaces();
 	});
     },
@@ -122,11 +133,19 @@ var AssemblaApp = {
 
 	this._ajaxCall('activetickets',function(resp) {
 	    console.log(resp);
-	    this._setData('activeSpaces', resp);
 	    
-	    var tickets = _.flatten(_.map(AssemblaApp.getActiveSpaces(), function(space) { return space.active_tickets; } ) );
+	    this._setData('activeSpaces', new AssemblaApp.Collections.Space( resp, { 
+		url : this._getAPIUrl() + "/activetickets",
+		model : AssemblaApp.Models.Space
+	    }) );
+	    
+	    var tickets = _.flatten(_.map(AssemblaApp.getActiveSpaces().toArray(), function(space) { return space.get("active_tickets"); } ) );
 	    tickets.sort( this._sortTicketsByDateAsc );
+	    
 	    this._setData('activeTickets', tickets);
+	    
+	    this.dispatcher.trigger("bootstrapActiveSpaces:loaded");
+	    
 	});
     },
 
@@ -164,9 +183,35 @@ var AssemblaApp = {
     },
 
     run : function() {
+	this.dispatcher = _.clone(Backbone.Events);
 	this.loadAssemblaAPI();
     }
 };
+
+
+
+AssemblaApp.Models.Ticket = Backbone.Model.extend({ });
+AssemblaApp.Collections.Ticket = Backbone.Collection.extend({ model: AssemblaApp.Models.Ticket });
+
+
+
+AssemblaApp.Models.Space = Backbone.Model.extend({ 
+    initialize : function() {
+	if( this.get("active_tickets") ){
+	    this.set("active_tickets", new AssemblaApp.Collections.Ticket( this.get("active_tickets"), {
+		model : AssemblaApp.Models.Ticket
+	    }) );
+	}
+    }
+});
+
+AssemblaApp.Collections.Space = Backbone.Collection.extend({ model: AssemblaApp.Models.Space });
+
+
+
+
+
+
 
 AssemblaApp.run();
 </script>
