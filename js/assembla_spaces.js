@@ -1,6 +1,56 @@
 
 var AssemblaApp = chrome.extension.getBackgroundPage().AssemblaApp;
 
+
+AssemblaApp.Views.Ticket_Collection = Backbone.View.extend({
+    initialize : function(){
+        this._ticketViews = [];
+
+        AssemblaApp.dispatcher.on("bootstrapActiveSpaces:loaded", function () {
+            this.render();
+        }, this);
+
+    },
+    render : function() {
+	_.each(this.collection, function(ticket){
+            var view =  new AssemblaApp.Views.Ticket({
+		el : this.el,
+		model : ticket
+            });
+            this._ticketViews.push(view);
+            view.render();
+
+        }, this );
+
+	jQuery(this.el).accordion({ collapsible: true,
+                                    autoHeight: false,
+                                    active: false });
+    }
+});
+
+AssemblaApp.Views.Ticket = Backbone.View.extend({
+    render : function() {
+        var t = _.extend({}, this.model.attributes);
+
+        t.date_string = "";
+        t.date_class = "";
+        if( this.model.get("due_date") ){
+            var d = new Date(this.model.get("due_date"));
+            var current_date = new Date();
+            t.date_string = ( parseInt(d.getUTCMonth()) + 1 ) + "/" + d.getUTCDate() + "/" + d.getUTCFullYear();
+            t.date_class = (d < current_date) ? "past_due" : '';
+        }
+
+        t.estimate = ( parseInt(this.model.get("estimate")) ) ? this.model.get("estimate") : "";
+
+        var tmplt = _.template(jQuery("#ticket-accordion").html() );
+        jQuery(this.el).append( tmplt({ ticket : t }) );
+    }
+});
+
+
+
+
 jQuery(document).ready(function() {
 
     
@@ -57,15 +107,15 @@ jQuery(document).ready(function() {
 
 
        jQuery('#tabs-2 .space-link').each(function() {
-	   jQuery(this).attr('href', AssemblaApp.getSpaceBaseUrl( space.wiki_name + "/" + jQuery(this).data('urlkey')));
+	   jQuery(this).attr('href', AssemblaApp.getSpaceBaseUrl( space.get("wiki_name") + "/" + jQuery(this).data('urlkey')));
        });
 
-       if( space.active_tickets.length ){
+       if( space.get("active_tickets").length ){
 	   var ticketSelect = jQuery('<select id="assembla-tickets">');
 
-	   jQuery.each(space.active_tickets, function(i, item) {
+	   jQuery.each(space.get("active_tickets"), function(i, item) {
 	       ticketSelect.append( jQuery('<option>').val( item.id)
-				    .text( item.number + ': ' + item.summary) );
+				    .text( item.get("number") + ': ' + item.get("summary")) );
 	   });
 
 	   jQuery('#tabs-2 #ticket-div').append(ticketSelect).append("<a class='gototicket' href='#'>Go to Ticket</a>");

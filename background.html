@@ -33,13 +33,6 @@ var AssemblaApp = {
 	return [];
     },
 
-    getActiveTickets : function(){
-	if( this.getData("activeTickets") ){
-	    return this.getData("activeTickets");
-	}
-	return [];
-    },
-
     _getUsername : function () {
 	return localStorage['assembla_username'];
     },
@@ -109,16 +102,16 @@ var AssemblaApp = {
 
     _sortTicketsByDateAsc : function (ticket1, ticket2 ){
 
-	if(ticket1.due_date === undefined && ticket2.due_date == undefined){
+	if(ticket1.get("due_date") === undefined && ticket2.get("due_date") == undefined){
 	    return 1;
-	} else if(ticket1.due_date === undefined){
+	} else if(ticket1.get("due_date") === undefined){
 	    return 1;
-	} else if(ticket2.due_date === undefined){
+	} else if(ticket2.get("due_date") === undefined){
 	    return -1;
 	} else {
 
-	    var date1 = new Date(ticket1.due_date);
-	    var date2 = new Date(ticket2.due_date);
+	    var date1 = new Date(ticket1.get("due_date"));
+	    var date2 = new Date(ticket2.get("due_date"));
 	    if( date1 == date2 ){
 		return 0;
 	    } else if( date1 > date2 ) {
@@ -129,6 +122,18 @@ var AssemblaApp = {
 	}
     },
 
+    getActiveTickets : function(){
+	if( this.getActiveSpaces() ){
+	    // active_tickets is a collection so we need to map 
+	    // toArray onto it before flattening all the arrays 
+	    // and sorting. functional programing for the win!
+	    return _.flatten( _.map( AssemblaApp.getActiveSpaces().pluck("active_tickets"), function( value ) { return value.toArray() }) ).sort( this._sortTicketsByDateAsc );
+
+	}
+	return [];
+    },
+
+
     bootstrapActiveSpaces : function() {
 
 	this._ajaxCall('activetickets',function(resp) {
@@ -138,12 +143,7 @@ var AssemblaApp = {
 		url : this._getAPIUrl() + "/activetickets",
 		model : AssemblaApp.Models.Space
 	    }) );
-	    
-	    var tickets = _.flatten(_.map(AssemblaApp.getActiveSpaces().toArray(), function(space) { return space.get("active_tickets"); } ) );
-	    tickets.sort( this._sortTicketsByDateAsc );
-	    
-	    this._setData('activeTickets', tickets);
-	    
+
 	    this.dispatcher.trigger("bootstrapActiveSpaces:loaded");
 	    
 	});
@@ -153,7 +153,7 @@ var AssemblaApp = {
     getActiveTicketsForSpace : function( space_id ){
 	var space = this.getSpace(space_id);
 	if( space ){
-	    return space.active_tickets;
+	    return space.get("active_tickets");
 	} else {
 	    return [];
 	}
@@ -167,19 +167,19 @@ var AssemblaApp = {
 	return '';
     },
     getSpaceName : function( space_id ){
-	return _.filter( this.getActiveSpaces(), function(item) { return item.id == space_id })[0].name;
+	return this.getActiveSpaces().get(space_id).get("name");
     },
 
     getWikiName : function( space_id ){
-	return _.filter( this.getActiveSpaces(), function(item) { return item.id == space_id })[0].wiki_name;
+	return this.getActiveSpaces().get(space_id).get("wiki_name");
     },
 
     getTicketNumber : function( ticket_id ){
-	return _.filter( this.getActiveTickets(), function(item) { return item.id == ticket_id })[0].number;
+	return this.getActiveTickets().get(ticket_id).get("number");
     },
 
     getSpace : function( space_id, callback ){
-	return _.filter( this.getActiveSpaces(), function(item) { return item.id == space_id })[0];
+	return this.getActiveSpaces().get(space_id);
     },
 
     run : function() {
@@ -192,7 +192,6 @@ var AssemblaApp = {
 
 AssemblaApp.Models.Ticket = Backbone.Model.extend({ });
 AssemblaApp.Collections.Ticket = Backbone.Collection.extend({ model: AssemblaApp.Models.Ticket });
-
 
 
 AssemblaApp.Models.Space = Backbone.Model.extend({ 
