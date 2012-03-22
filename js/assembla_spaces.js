@@ -13,6 +13,9 @@ AssemblaApp.Views.Ticket_Tab_Accordion = Backbone.View.extend({
 
     },
     render : function() {
+	
+	jQuery(this.el).empty();
+	
 	if( this.collection.length ){
 	    this.collection.each( function(ticket){
 		var view =  new AssemblaApp.Views.Ticket_Accordion_Element({
@@ -27,6 +30,8 @@ AssemblaApp.Views.Ticket_Tab_Accordion = Backbone.View.extend({
 	    jQuery(this.el).accordion({ collapsible: true,
 					autoHeight: false,
 					active: false });
+	} else {
+	    jQuery(this.el).html( "<img src='img/ajax-loader-bar.gif' class='loader-bar'/>" );
 	}
     },
     
