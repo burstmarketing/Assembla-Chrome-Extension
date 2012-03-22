@@ -1,34 +1,38 @@
-
+var ticket_tab_accordion_view;
 var AssemblaApp = chrome.extension.getBackgroundPage().AssemblaApp;
 
 
-AssemblaApp.Views.Ticket_Collection = Backbone.View.extend({
+AssemblaApp.Views.Ticket_Tab_Accordion = Backbone.View.extend({
     initialize : function(){
         this._ticketViews = [];
 
         AssemblaApp.dispatcher.on("bootstrapActiveSpaces:loaded", function () {
+	    this.collection = AssemblaApp.getActiveTickets();
             this.render();
         }, this);
 
     },
     render : function() {
-	_.each(this.collection, function(ticket){
-            var view =  new AssemblaApp.Views.Ticket({
-		el : this.el,
-		model : ticket
-            });
-            this._ticketViews.push(view);
-            view.render();
-
-        }, this );
-
-	jQuery(this.el).accordion({ collapsible: true,
-                                    autoHeight: false,
-                                    active: false });
-    }
+	if( this.collection.length ){
+	    this.collection.each( function(ticket){
+		var view =  new AssemblaApp.Views.Ticket_Accordion_Element({
+		    el : this.el,
+		    model : ticket
+		});
+		this._ticketViews.push(view);
+		view.render();
+		
+            }, this );
+	    
+	    jQuery(this.el).accordion({ collapsible: true,
+					autoHeight: false,
+					active: false });
+	}
+    },
+    
 });
 
-AssemblaApp.Views.Ticket = Backbone.View.extend({
+AssemblaApp.Views.Ticket_Accordion_Element = Backbone.View.extend({
     render : function() {
         var t = _.extend({}, this.model.attributes);
 
@@ -50,44 +54,23 @@ AssemblaApp.Views.Ticket = Backbone.View.extend({
 
 
 
-
 jQuery(document).ready(function() {
-
-    
-
+			      
     // When clicking a space link, (wiki, files, time, etc) - Open a new tab for it
-    jQuery('.space-link').click(function() {
+    jQuery('.space-link').live( "click", function() {
 	chrome.tabs.create({url: "http://" + jQuery(this).attr('href')});
 	return false;
     });
 
-
-    
-    _.each( AssemblaApp.getActiveTickets(), function(ticket) {	
-	var t = _.extend({}, ticket);
-	
-	t.date_string = "";
-	t.date_class = '';
-	if( ticket.due_date ){
-	    var d = new Date( ticket.due_date );
-	    var current_date = new Date();
-	    t.date_string = ( parseInt(d.getUTCMonth()) + 1 ) + "/" + d.getUTCDate() + "/" + d.getUTCFullYear();
-	    t.date_class = (d < current_date) ? "past_due" : '';
-	}
-	
-	t.estimate = ( parseInt(ticket.estimate) ) ? ticket.estimate : "";
-	
-	var tmplt = _.template(jQuery("#ticket-accordion").html());
-	jQuery("#tabs-1 #ticket-div").append( tmplt({ticket : t}) );
-
+    ticket_tab_accordion_view = new AssemblaApp.Views.Ticket_Tab_Accordion({ 
+	el : "#tabs-1 #ticket-div", 
+	collection : AssemblaApp.getActiveTickets()
     });
-			   
-    jQuery("#tabs-1 #ticket-div").accordion({collapsible: true, 
-					     autoHeight: false, 
-					     active: false });
 
-			   
-   // Populate select for spaces with assemblaSpaces
+    ticket_tab_accordion_view.render();
+
+
+/*
     jQuery.each(AssemblaApp.getActiveSpaces(), function(i, item) {
 	jQuery('#tabs-2 #assembla-spaces').append('<option value="' + item.id + '">' + item.name + '</option>');
     });
@@ -150,7 +133,7 @@ jQuery(document).ready(function() {
 
     });
 
-
+*/
 
 });
 

@@ -123,14 +123,14 @@ var AssemblaApp = {
     },
 
     getActiveTickets : function(){
-	if( this.getActiveSpaces() ){
+	if( this.getActiveSpaces().length ){
 	    // active_tickets is a collection so we need to map 
 	    // toArray onto it before flattening all the arrays 
 	    // and sorting. functional programing for the win!
-	    return _.flatten( _.map( AssemblaApp.getActiveSpaces().pluck("active_tickets"), function( value ) { return value.toArray() }) ).sort( this._sortTicketsByDateAsc );
+	    return new this.Collections.Ticket( _.flatten( _.map( AssemblaApp.getActiveSpaces().pluck("active_tickets"), function( value ) { return value.toArray() }) ).sort( this._sortTicketsByDateAsc ));
 
 	}
-	return [];
+	return new this.Collections.Ticket([]);
     },
 
 
@@ -186,6 +186,7 @@ var AssemblaApp = {
 	this.dispatcher = _.clone(Backbone.Events);
 	this.loadAssemblaAPI();
     }
+ 
 };
 
 
