@@ -38,8 +38,10 @@ span.past_due {
     color : #d42020
 }
 
-img.loader-bar {
-    text-align: center;
+div.loader-bar {
+    background:url(../img/ajax-loader-bar.gif) center no-repeat;
+    width: 100%;
+    height:19px;
     padding-top: 25px;
     padding-bottom: 25px;
 }

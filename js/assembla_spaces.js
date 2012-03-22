@@ -31,7 +31,7 @@ AssemblaApp.Views.Ticket_Tab_Accordion = Backbone.View.extend({
 					autoHeight: false,
 					active: false });
 	} else {
-	    jQuery(this.el).html( "<img src='img/ajax-loader-bar.gif' class='loader-bar'/>" );
+	    jQuery(this.el).html( "<div class='loader-bar'></div>" );
 	}
     },
     
