@@ -45,3 +45,23 @@ div.loader-bar {
     padding-top: 25px;
     padding-bottom: 25px;
 }
+
+ul.ticket_info {
+    list-style-type:none;
+}
+
+ul.ticket_info div.left-column {
+    float:left;
+    width:150px;
+}
+ul.ticket_info div.right-column {
+    float:left;
+    width:150px;
+}
+
+span.space_name {
+    float:left;
+}
+a.gototicket {
+    float:right;
+}

@@ -41,7 +41,19 @@
       <span style='display:block;clear:both;'></span>
     </a>
   </h3>
-  <div><span><%= AssemblaApp.getSpaceName(ticket.space_id) %></span></div>
+  <div>
+    <span class="space_name"><%= AssemblaApp.getSpaceName(ticket.space_id) %></span>
+    <a class="space-link gototicket" href='<%= AssemblaApp.getSpaceBaseUrl( AssemblaApp.getWikiName(ticket.space_id) ) + "/tickets/" + ticket.number %>'>Go to Ticket</a>
+    <div style="clear:both;"></div>
+    <ul class="ticket_info">
+      <li><div class="left-column">Status:</div><div class="right-column"><%= ticket.status_name %></div><div style="clear:both;" /></li>
+      <li><div class="left-column">Due Date:</div><div class="right-column"><%= ticket.date_string %></div><div style="clear:both;" /></li>
+      <li><div class="left-column">Estimate:</div><div class="right-column"><%= ticket.estimate %></div><div style="clear:both;" /></li>
+      <li><div class="left-column">Hours Invested:</div><div class="right-column"><%= ticket.invested_hours %></div><div style="clear:both;" /></li>
+      <li>Description:</li>
+      <li><%= ticket.description %></li>
+    </ul>
+  </div>
 </script>
 
 
