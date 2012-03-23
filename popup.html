@@ -4,6 +4,33 @@
 <script type="text/javascript" src="/js/lib/backbone.js"></script>
 <script type="text/javascript" src="/js/assembla_spaces.js"></script>
 
+<script type="text/template" id="spaces-tab-space">
+  
+    <div id="space-links">
+      <a class="space-link first-space-link" id="wiki-link" href="<%= AssemblaApp.getSpaceBaseUrl( space.wiki_name ) %>/wiki">Wiki</a>
+      <a class="space-link" id="files-link" href="<%= AssemblaApp.getSpaceBaseUrl( space.wiki_name ) %>/documents">Files</a>
+      <a class="space-link" id="tickets-link"  href="<%= AssemblaApp.getSpaceBaseUrl( space.wiki_name ) %>/tickets">Tickets</a>
+      <a class="space-link" id="time-link" href="<%= AssemblaApp.getSpaceBaseUrl( space.wiki_name ) %>/time_entries">Time</a>
+    </div>
+    
+    <div id="spaces-tab-ticket-div" style="margin-bottom:18px;margin-top:18px;">
+      
+    </div>
+  
+</script>
+
+
+
+<script type="text/template" id="spaces-tab">
+  <select id="assembla-spaces">
+      <option value="0">Project Name</option>
+      <% _.each( spaces, function( space ){ %>
+      <option value="<%= space.id %>"><%= space.name %></option>
+      <% }); %>
+  </select> 
+  <div id="ticket-finder" style="margin-bottom:18px;"> </div>
+</script>
+
 
 <script type="text/template" id="ticket-accordion">
   <h3>
@@ -23,8 +50,11 @@
       jQuery("#tabs").tabs();
   });
 </script>
+
+
 <link   type="text/css" href="/css/lib/jquery-ui-1.8.18.custom.css" rel="stylesheet" />
 <link   type="text/css" href="/css/popup.css" rel="stylesheet" />
+
 
 <div id="tabs">
 <ul>
@@ -37,22 +67,5 @@
   </div>
 </div>
 <div id="tabs-2">
-  <div id="ticket-finder" style="margin-bottom:18px;">
-    
-    <div class="loader-bar"></div>
-    
-    <select id="assembla-spaces" style="display:none;">
-      <option value="0">Project Name</option>
-    </select>
-
-    <div id="space-links" style="display:none;">
-      <a class="space-link first-space-link" data-urlkey="wiki" id="wiki-link" href="#">Wiki</a>
-      <a class="space-link"  data-urlkey="documents" id="files-link" href="#">Files</a>
-      <a class="space-link" data-urlkey="tickets" id="tickets-link"  href="#">Tickets</a>
-      <a class="space-link" data-urlkey="time_entries" id="time-link" href="#">Time</a>
-    </div>
-  </div>
-  <div id="ticket-div" style="margin-bottom:18px;">
-
-  </div>
+    <div class="loader-bar"></div>    
 </div>
