@@ -161,25 +161,38 @@ var AssemblaApp = {
 
     getSpaceBaseUrl : function( uri ){
 	if( !uri ) { uri = ''; }
+	
 	if( this.AssemblaAPI.defaults.url ){
 	    return this.AssemblaAPI.defaults.url + "/spaces/" + uri;
 	}
 	return '';
     },
     getSpaceName : function( space_id ){
-	return this.getActiveSpaces().get(space_id).get("name");
+	if( this.getActiveSpaces().length ){
+	    return this.getActiveSpaces().get(space_id).get("name");
+	}
+	return "";
     },
 
     getWikiName : function( space_id ){
-	return this.getActiveSpaces().get(space_id).get("wiki_name");
+	if( this.getActiveSpaces().length ){
+	    return this.getActiveSpaces().get(space_id).get("wiki_name");
+	}
+	return ""
     },
 
     getTicketNumber : function( ticket_id ){
-	return this.getActiveTickets().get(ticket_id).get("number");
+	if( this.getActiveSpaces().length ){
+	    return this.getActiveTickets().get(ticket_id).get("number");
+	}
+	return "";
     },
 
     getSpace : function( space_id, callback ){
-	return this.getActiveSpaces().get(space_id);
+	if( this.getActiveSpaces().length ){
+	    return this.getActiveSpaces().get(space_id);
+	}
+	return {};
     },
 
     run : function() {
