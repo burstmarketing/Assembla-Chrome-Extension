@@ -3,6 +3,7 @@
 <script type="text/javascript" src="/js/lib/underscore.js"></script>
 <script type="text/javascript" src="/js/lib/backbone.js"></script>
 <script type="text/javascript" src="/js/assembla_spaces.js"></script>
+<script type="text/javascript" src="/js/assembla_timelogs.js"></script>
 
 <script type="text/template" id="spaces-tab-space">
 
@@ -56,6 +57,12 @@
   </div>
 </script>
 
+<script type="text/template" id="timelog-accordion">
+  <h3>FOO</h3>
+  <div>
+    STUFF
+  </div>
+</script>
 
 <script type="text/javascript">
   jQuery(document).ready(function(){
@@ -83,5 +90,8 @@
     <div class="loader-bar"></div>
 </div>
 <div id="tabs-3">
+  <div id="active_time_log"></div>
+  <div id="previous_time_logs">
     <div class="loader-bar"></div>
+  </div>
 </div>

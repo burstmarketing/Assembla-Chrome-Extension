@@ -3,6 +3,16 @@
 <script type="text/javascript" src="/js/lib/backbone.js"></script>
 <script type="text/javascript">
 
+Backbone._sync = Backbone.sync;
+Backbone.sync = function(method, model, options) {
+    options = _.extend( options, {
+        beforeSend: function(xhr) {
+            xhr.setRequestHeader("Authorization", "Basic " + window.btoa( localStorage['assembla_username']  + ":" + localStorage['assembla_password'] ) );
+
+	} });
+    return Backbone._sync( method, model, options );
+};
+
 var AssemblaApp = {
     Models : {},
     Collections : {},
@@ -29,6 +39,12 @@ var AssemblaApp = {
     getActiveSpaces : function(){
 	if( this.getData("activeSpaces") ){
 	    return this.getData("activeSpaces");
+	}
+	return [];
+    },
+    getActiveTimeLogs : function(){
+	if( this.getData("activeTimeLogs") ){
+	    return this.getData("activeTimeLogs");
 	}
 	return [];
     },
