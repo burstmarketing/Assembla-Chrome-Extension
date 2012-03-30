@@ -5,18 +5,18 @@
 <script type="text/javascript" src="/js/assembla_spaces.js"></script>
 
 <script type="text/template" id="spaces-tab-space">
-  
+
     <div id="space-links">
       <a class="space-link first-space-link" id="wiki-link" href="<%= AssemblaApp.getSpaceBaseUrl( space.wiki_name ) %>/wiki">Wiki</a>
       <a class="space-link" id="files-link" href="<%= AssemblaApp.getSpaceBaseUrl( space.wiki_name ) %>/documents">Files</a>
       <a class="space-link" id="tickets-link"  href="<%= AssemblaApp.getSpaceBaseUrl( space.wiki_name ) %>/tickets">Tickets</a>
       <a class="space-link" id="time-link" href="<%= AssemblaApp.getSpaceBaseUrl( space.wiki_name ) %>/time_entries">Time</a>
     </div>
-    
+
     <div id="spaces-tab-ticket-div" style="margin-bottom:18px;margin-top:18px;">
-      
+
     </div>
-  
+
 </script>
 
 
@@ -27,7 +27,7 @@
       <% _.each( spaces, function( space ){ %>
       <option value="<%= space.id %>"><%= space.name %></option>
       <% }); %>
-  </select> 
+  </select>
   <div id="ticket-finder" style="margin-bottom:18px;"> </div>
 </script>
 
@@ -72,6 +72,7 @@
 <ul>
   <li><a href="#tabs-1">Tickets</a></li>
   <li><a href="#tabs-2">Spaces</a></li>
+  <li><a href="#tabs-3">Time</a></li>
 </ul>
 <div id="tabs-1">
   <div id="ticket-div" style="margin-bottom:18px;">
@@ -79,5 +80,8 @@
   </div>
 </div>
 <div id="tabs-2">
-    <div class="loader-bar"></div>    
+    <div class="loader-bar"></div>
+</div>
+<div id="tabs-3">
+    <div class="loader-bar"></div>
 </div>

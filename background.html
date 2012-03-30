@@ -9,7 +9,7 @@ var AssemblaApp = {
     Views : {},
     dispatcher : {},
     _data : {},
-    
+
 
     _setData : function (key,value){
 	this._data[key] = value;
@@ -91,14 +91,16 @@ var AssemblaApp = {
     },
 
 
-        
+
     loadAssemblaAPI : function(){
 	this._ajaxCall( 'getconfig', function(data){
 	    this.AssemblaAPI = data;
-	    
+
 	    this.bootstrapActiveSpaces();
+	    this.bootstrapTimeLogs();
 	});
     },
+
 
 
     _sortTicketsByDateAsc : function (ticket1, ticket2 ){
@@ -125,8 +127,8 @@ var AssemblaApp = {
 
     getActiveTickets : function(){
 	if( this.getActiveSpaces().length ){
-	    // active_tickets is a collection so we need to map 
-	    // toArray onto it before flattening all the arrays 
+	    // active_tickets is a collection so we need to map
+	    // toArray onto it before flattening all the arrays
 	    // and sorting. functional programing for the win!
 	    return new this.Collections.Ticket( _.flatten( _.map( AssemblaApp.getActiveSpaces().pluck("active_tickets"), function( value ) { return value.toArray() }) ).sort( this._sortTicketsByDateAsc ));
 
@@ -138,15 +140,30 @@ var AssemblaApp = {
     bootstrapActiveSpaces : function() {
 
 	this._ajaxCall('activetickets',function(resp) {
-	    	    
-	    this._setData('activeSpaces', new AssemblaApp.Collections.Space( resp, { 
+
+	    this._setData('activeSpaces', new AssemblaApp.Collections.Space( resp, {
 		url : this._getAPIUrl() + "/activetickets",
 		model : AssemblaApp.Models.Space
 	    }) );
 
 	    this.dispatcher.trigger("bootstrapActiveSpaces:loaded");
-	    
+
 	});
+    },
+
+    bootstrapTimeLogs : function() {
+
+	this._ajaxCall('user/time_entries',function(resp) {
+
+	    this._setData('activeTimeLogs', new AssemblaApp.Collections.TimeLog( resp, {
+		url : this._getAPIUrl() + "/user/time_entries",
+		model : AssemblaApp.Models.TimeLog
+	    }) );
+
+	    this.dispatcher.trigger("bootstrapActiveTimeLogs:loaded");
+
+	});
+
     },
 
 
@@ -161,7 +178,7 @@ var AssemblaApp = {
 
     getSpaceBaseUrl : function( uri ){
 	if( !uri ) { uri = ''; }
-	
+
 	if( this.AssemblaAPI.defaults.url ){
 	    return this.AssemblaAPI.defaults.url + "/spaces/" + uri;
 	}
@@ -199,7 +216,7 @@ var AssemblaApp = {
 	this.dispatcher = _.clone(Backbone.Events);
 	this.loadAssemblaAPI();
     }
- 
+
 };
 
 
@@ -208,7 +225,7 @@ AssemblaApp.Models.Ticket = Backbone.Model.extend({ });
 AssemblaApp.Collections.Ticket = Backbone.Collection.extend({ model: AssemblaApp.Models.Ticket });
 
 
-AssemblaApp.Models.Space = Backbone.Model.extend({ 
+AssemblaApp.Models.Space = Backbone.Model.extend({
     initialize : function() {
 	if( this.get("active_tickets") ){
 	    this.set("active_tickets", new AssemblaApp.Collections.Ticket( this.get("active_tickets"), {
@@ -219,6 +236,10 @@ AssemblaApp.Models.Space = Backbone.Model.extend({
 });
 
 AssemblaApp.Collections.Space = Backbone.Collection.extend({ model: AssemblaApp.Models.Space });
+
+
+AssemblaApp.Models.TimeLog = Backbone.Model.extend({});
+AssemblaApp.Collections.TimeLog = Backbone.Collection.extend({ model: AssemblaApp.Models.TimeLog });
 
 
 
