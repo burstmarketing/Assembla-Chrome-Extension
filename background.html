@@ -74,8 +74,9 @@ var AssemblaApp = {
 	jQuery.ajax({
 	    cache: true,
 	    async: true,
-	    username: this._getUsername(),
-	    password: this._getPassword(),
+            beforeSend: function(xhr) {
+                xhr.setRequestHeader("Authorization", "Basic " + window.btoa( this._getUsername()  + ":" + this._getPassword() ) );
+            }.bind(this),
 	    dataType: 'json',
 	    url: this._getAPIUrl() + "/" + uri,
 	    success: callback
@@ -137,8 +138,7 @@ var AssemblaApp = {
     bootstrapActiveSpaces : function() {
 
 	this._ajaxCall('activetickets',function(resp) {
-	    console.log(resp);
-	    
+	    	    
 	    this._setData('activeSpaces', new AssemblaApp.Collections.Space( resp, { 
 		url : this._getAPIUrl() + "/activetickets",
 		model : AssemblaApp.Models.Space
