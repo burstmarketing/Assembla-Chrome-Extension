@@ -3,6 +3,8 @@
 <script type="text/javascript" src="/js/lib/backbone.js"></script>
 <script type="text/javascript">
 
+
+// duck punching for fun and profit.
 Backbone._sync = Backbone.sync;
 Backbone.sync = function(method, model, options) {
     options = _.extend( options, {
@@ -42,9 +44,9 @@ var AssemblaApp = {
 	}
 	return [];
     },
-    getActiveTimeLogs : function(){
-	if( this.getData("activeTimeLogs") ){
-	    return this.getData("activeTimeLogs");
+    getTimeLogs : function(){
+	if( this.getData("timeLogs") ){
+	    return this.getData("timeLogs");
 	}
 	return [];
     },
@@ -143,10 +145,14 @@ var AssemblaApp = {
 
     getActiveTickets : function(){
 	if( this.getActiveSpaces().length ){
-	    // active_tickets is a collection so we need to map
+	    // tickets is a collection so we need to map
 	    // toArray onto it before flattening all the arrays
 	    // and sorting. functional programing for the win!
-	    return new this.Collections.Ticket( _.flatten( _.map( AssemblaApp.getActiveSpaces().pluck("active_tickets"), function( value ) { return value.toArray() }) ).sort( this._sortTicketsByDateAsc ));
+	    return new this.Collections.Ticket(
+		_.flatten(
+		    _.map( AssemblaApp.getActiveSpaces().pluck("tickets"),
+			   function( value ) { return value.toArray() }) )
+		    .sort( this._sortTicketsByDateAsc ));
 
 	}
 	return new this.Collections.Ticket([]);
@@ -155,35 +161,22 @@ var AssemblaApp = {
 
     bootstrapActiveSpaces : function() {
 
-
-
 	this._setData('activeSpaces', new AssemblaApp.Collections.Space( [], {
 	    model : AssemblaApp.Models.Space
 	}) );
+
 	this.getActiveSpaces().url = this._getAPIUrl() + "/activetickets";
-
-	this.getActiveSpaces().fetch( {
-	    success: function( collection, response ){
-		this.dispatcher.trigger("bootstrapActiveSpaces:loaded");
-	    }.bind(this)
-	});
-
-
+	this.getActiveSpaces().fetch( );
     },
 
     bootstrapTimeLogs : function() {
 
-	this._setData('activeTimeLogs', new AssemblaApp.Collections.TimeLog( [], {
+	this._setData('timeLogs', new AssemblaApp.Collections.TimeLog( [], {
 	    model : AssemblaApp.Models.TimeLog
 	}) );
 
-	this.getActiveTimeLogs().url = this._getAPIUrl() + "/user/time_entries";
-
-	this.getActiveTimeLogs().fetch( {
-	    success: function( collection, response ){
-		this.dispatcher.trigger("bootstrapActiveTimeLogs:loaded");
-	    }.bind(this)
-	});
+	this.getTimeLogs().url = this._getAPIUrl() + "/user/time_entries";
+	this.getTimeLogs().fetch();
 
     },
 
@@ -191,10 +184,17 @@ var AssemblaApp = {
     getActiveTicketsForSpace : function( space_id ){
 	var space = this.getSpace(space_id);
 	if( space ){
-	    return space.get("active_tickets");
+	    return space.get("tickets");
 	} else {
 	    return [];
 	}
+    },
+    getBaseUrl : function( uri ){
+	if( !uri ) { uri = ''; }
+	if( this.AssemblaAPI.defaults.url ){
+	    return this.AssemblaAPI.defaults.url + "/" + uri;
+	}
+	return  '';
     },
 
     getSpaceBaseUrl : function( uri ){
@@ -226,11 +226,12 @@ var AssemblaApp = {
 	return "";
     },
 
-    getSpace : function( space_id, callback ){
-	if( this.getActiveSpaces().length ){
-	    return this.getActiveSpaces().get(space_id);
+    withSpace : function( space_id, callback ){
+	if( this.getActiveSpaces().get(space_id) ){
+	    callback = _.bind( callback, this.getActiveSpaces().get(space_id) );
+	    callback();
 	}
-	return {};
+
     },
 
     run : function() {
@@ -248,12 +249,27 @@ AssemblaApp.Collections.Ticket = Backbone.Collection.extend({ model: AssemblaApp
 
 AssemblaApp.Models.Space = Backbone.Model.extend({
     initialize : function() {
-	if( this.get("active_tickets") ){
-	    this.set("active_tickets", new AssemblaApp.Collections.Ticket( this.get("active_tickets"), {
+	if( this.get("tickets") ){
+	    this.set("tickets", new AssemblaApp.Collections.Ticket( this.get("tickets"), {
 		model : AssemblaApp.Models.Ticket
 	    }) );
 	}
+    },
+
+    getTickets : function() {
+	if( this.get("tickets") ){
+	    return this.get("tickets");
+	}
+	return new AssemblaApp.Collections.Ticket();
+    },
+
+    withTicket : function (ticket_id, callback ){
+	if( this.getTickets().get(ticket_id) ){
+	    callback = _.bind( callback, this.getTickets().get(ticket_id) );
+	    callback();
+	}
     }
+
 });
 
 AssemblaApp.Collections.Space = Backbone.Collection.extend({ model: AssemblaApp.Models.Space });

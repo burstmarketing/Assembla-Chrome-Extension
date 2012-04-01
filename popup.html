@@ -58,9 +58,18 @@
 </script>
 
 <script type="text/template" id="timelog-accordion">
-  <h3>FOO</h3>
-  <div>
-    STUFF
+  <h3 class='<%= timelog.id%>'>
+    <a href="#">
+      <span class='timelog-name'><%= timelog.ticket_name %></span>
+      <span class='timelog-hours'><%= timelog.hours %></span>
+      <span style='display:block;clear:both;'></span>
+    </a>
+  </h3>
+  <div class='<%= timelog.id%>'>
+    <ul class='timelog-info'>
+      <li>Description:</li>
+      <li><%= timelog.description %></li>
+    </ul>
   </div>
 </script>
 

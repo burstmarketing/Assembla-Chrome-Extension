@@ -59,6 +59,17 @@ ul.ticket_info div.right-column {
     width:150px;
 }
 
+span.timelog-name {
+    float:left;
+    display:block;
+}
+span.timelog-hours {
+    float:right;
+    display:block;
+}
+ul.timelog-info {
+    list-style-type:none;
+}
 span.space_name {
     float:left;
 }
