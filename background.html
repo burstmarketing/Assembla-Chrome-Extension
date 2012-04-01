@@ -155,29 +155,34 @@ var AssemblaApp = {
 
     bootstrapActiveSpaces : function() {
 
-	this._ajaxCall('activetickets',function(resp) {
 
-	    this._setData('activeSpaces', new AssemblaApp.Collections.Space( resp, {
-		url : this._getAPIUrl() + "/activetickets",
-		model : AssemblaApp.Models.Space
-	    }) );
 
-	    this.dispatcher.trigger("bootstrapActiveSpaces:loaded");
+	this._setData('activeSpaces', new AssemblaApp.Collections.Space( [], {
+	    model : AssemblaApp.Models.Space
+	}) );
+	this.getActiveSpaces().url = this._getAPIUrl() + "/activetickets";
 
+	this.getActiveSpaces().fetch( {
+	    success: function( collection, response ){
+		this.dispatcher.trigger("bootstrapActiveSpaces:loaded");
+	    }.bind(this)
 	});
+
+
     },
 
     bootstrapTimeLogs : function() {
 
-	this._ajaxCall('user/time_entries',function(resp) {
+	this._setData('activeTimeLogs', new AssemblaApp.Collections.TimeLog( [], {
+	    model : AssemblaApp.Models.TimeLog
+	}) );
 
-	    this._setData('activeTimeLogs', new AssemblaApp.Collections.TimeLog( resp, {
-		url : this._getAPIUrl() + "/user/time_entries",
-		model : AssemblaApp.Models.TimeLog
-	    }) );
+	this.getActiveTimeLogs().url = this._getAPIUrl() + "/user/time_entries";
 
-	    this.dispatcher.trigger("bootstrapActiveTimeLogs:loaded");
-
+	this.getActiveTimeLogs().fetch( {
+	    success: function( collection, response ){
+		this.dispatcher.trigger("bootstrapActiveTimeLogs:loaded");
+	    }.bind(this)
 	});
 
     },

@@ -5,10 +5,11 @@ AssemblaApp.Views.Spaces_Tab = Backbone.View.extend({
     initialize : function() {
 	this.ticket_list = new AssemblaApp.Views.Ticket_Tab_Accordion({});
 
-	AssemblaApp.dispatcher.on("bootstrapActiveSpaces:loaded", function () {
+	AssemblaApp.getActiveSpaces().on( "change", function () {
 	    this.collection = AssemblaApp.getActiveSpaces();
             this.render();
         }, this);
+
     },
 
     render : function() {
