@@ -105,41 +105,6 @@ var AssemblaApp = {
 
     },
 
-    _ajaxCall : function( uri, callback ){
-
-	callback = _.bind(callback, this);
-
-	jQuery.ajax({
-	    cache: true,
-	    async: true,
-            beforeSend: function(xhr) {
-                xhr.setRequestHeader("Authorization", "Basic " + window.btoa( this._getUsername()  + ":" + this._getPassword() ) );
-            }.bind(this),
-	    dataType: 'json',
-	    url: this.getAPIUrl() + "/" + uri,
-	    success: callback
-
-	});
-
-    },
-
-
-    _callService : function( service_title, args, callback ){
-	this._ajaxCall(this._processUri( this._getService(service_title).uri, args ), callback);
-    },
-
-
-
-    loadAssemblaAPI : function(){
-	this._ajaxCall( 'getconfig', function(data){
-	    this.AssemblaAPI = data;
-
-	    this.bootstrapActiveSpaces();
-	    this.bootstrapTimeLogs();
-	});
-    },
-
-
 
     _sortTicketsByDateAsc : function (ticket1, ticket2 ){
 
@@ -201,50 +166,21 @@ var AssemblaApp = {
     },
 
 
-    getActiveTicketsForSpace : function( space_id ){
-	var space = this.getSpace(space_id);
-	if( space ){
-	    return space.get("tickets");
-	} else {
-	    return [];
-	}
-    },
     getBaseUrl : function( uri ){
 	if( !uri ) { uri = ''; }
+
 	if( this.AssemblaAPI.defaults.url ){
-	    return this.AssemblaAPI.defaults.url + "/assembla/" + uri;
+	    return "www.assembla.com/" + uri;
 	}
+
 	return  '';
     },
 
     getSpaceBaseUrl : function( uri ){
 	if( !uri ) { uri = ''; }
-
-	if( this.AssemblaAPI.defaults.url ){
-	    return this.AssemblaAPI.defaults.url + "/spaces/" + uri;
-	}
-	return '';
-    },
-    getSpaceName : function( space_id ){
-	if( this.getActiveSpaces().length ){
-	    return this.getActiveSpaces().get(space_id).get("name");
-	}
-	return "";
+	return this.getBaseUrl( "/spaces/" + uri );
     },
 
-    getWikiName : function( space_id ){
-	if( this.getActiveSpaces().length ){
-	    return this.getActiveSpaces().get(space_id).get("wiki_name");
-	}
-	return ""
-    },
-
-    getTicketNumber : function( ticket_id ){
-	if( this.getActiveSpaces().length ){
-	    return this.getActiveTickets().get(ticket_id).get("number");
-	}
-	return "";
-    },
 
     withSpace : function( space_id, callback ){
 	if( this.getActiveSpaces().get(space_id) ){
@@ -254,12 +190,13 @@ var AssemblaApp = {
 	    callback = _.bind( callback, this.getCache().getSpace(space_id));
 	    callback();
 	} else {
-	    this.getCache().addSpace( new this.Models.Space({
-		id : space_id,
-		url : this.getSpaceBaseUrl( space_id )
-	    }) );
+	    var space = new this.Models.Space();
+
+	    space.url = this.getSpaceBaseUrl( space_id );
+	    this.getCache().addSpace( space );
+
 	    _.bind( callback, this.getCache().getSpace(space_id) );
-	    this.getCache().getSpace(space_id).fetch({
+	    space.fetch({
 		success : callback
 	    });
 	}
@@ -268,7 +205,6 @@ var AssemblaApp = {
 
     run : function() {
 	this.dispatcher = _.clone(Backbone.Events);
-	this.loadAssemblaAPI();
     }
 
 };
@@ -286,7 +222,7 @@ AssemblaApp.Models.Space = Backbone.Model.extend({
 		model : AssemblaApp.Models.Ticket
 	    }) );
 	}
-	this._ticketCache = new AssemblaApp.Collections.Ticket({});
+	this._ticketCache = new AssemblaApp.Collections.Ticket();
     },
 
     getTickets : function() {
@@ -304,7 +240,7 @@ AssemblaApp.Models.Space = Backbone.Model.extend({
 	    callback = _.bind( callback, this._ticketCache.where({ number : ticket_number})[0] );
 	    callback();
 	} else {
-	    var ticket =  new AssemblaApp.Models.Ticket({});
+	    var ticket =  new AssemblaApp.Models.Ticket();
 	    ticket.url = AssemblaApp.getAPIUrl() + '/spaces/' + this.get("id") + '/tickets/' + ticket_number;
 
 	    this._ticketCache.add( ticket );
