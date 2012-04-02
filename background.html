@@ -21,8 +21,28 @@ var AssemblaApp = {
     Views : {},
     dispatcher : {},
     _data : {},
+    _cache : {
+	_spaces : {},
+	getSpace : function (space_id){
+	    if( this._spaces[space_id] ){
+		return this._spaces[space_id];
+	    }
+	    return false;
+	},
+	addSpace : function (space){
+	    if( this._spaces[space.get("id")] ){
+		if( this._spaces[space.get("id")] != space ){
+		    this._spaces[space.get("id")] = space;
+		}
+	    } else {
+		this._spaces[space.get("id")] = space;
+	    }
+	}
 
-
+    },
+    getCache : function (){
+	return this._cache;
+    },
     _setData : function (key,value){
 	this._data[key] = value;
     },
@@ -68,7 +88,7 @@ var AssemblaApp = {
 	}
     },
 
-    _getAPIUrl : function(){
+    getAPIUrl : function(){
 	return localStorage['assembla_api'];
     },
 
@@ -96,7 +116,7 @@ var AssemblaApp = {
                 xhr.setRequestHeader("Authorization", "Basic " + window.btoa( this._getUsername()  + ":" + this._getPassword() ) );
             }.bind(this),
 	    dataType: 'json',
-	    url: this._getAPIUrl() + "/" + uri,
+	    url: this.getAPIUrl() + "/" + uri,
 	    success: callback
 
 	});
@@ -165,7 +185,7 @@ var AssemblaApp = {
 	    model : AssemblaApp.Models.Space
 	}) );
 
-	this.getActiveSpaces().url = this._getAPIUrl() + "/activetickets";
+	this.getActiveSpaces().url = this.getAPIUrl() + "/activetickets";
 	this.getActiveSpaces().fetch( );
     },
 
@@ -175,7 +195,7 @@ var AssemblaApp = {
 	    model : AssemblaApp.Models.TimeLog
 	}) );
 
-	this.getTimeLogs().url = this._getAPIUrl() + "/user/time_entries";
+	this.getTimeLogs().url = this.getAPIUrl() + "/user/time_entries";
 	this.getTimeLogs().fetch();
 
     },
@@ -192,7 +212,7 @@ var AssemblaApp = {
     getBaseUrl : function( uri ){
 	if( !uri ) { uri = ''; }
 	if( this.AssemblaAPI.defaults.url ){
-	    return this.AssemblaAPI.defaults.url + "/" + uri;
+	    return this.AssemblaAPI.defaults.url + "/assembla/" + uri;
 	}
 	return  '';
     },
@@ -230,6 +250,18 @@ var AssemblaApp = {
 	if( this.getActiveSpaces().get(space_id) ){
 	    callback = _.bind( callback, this.getActiveSpaces().get(space_id) );
 	    callback();
+	} else if( this.getCache().getSpace(space_id) ){
+	    callback = _.bind( callback, this.getCache().getSpace(space_id));
+	    callback();
+	} else {
+	    this.getCache().addSpace( new this.Models.Space({
+		id : space_id,
+		url : this.getSpaceBaseUrl( space_id )
+	    }) );
+	    _.bind( callback, this.getCache().getSpace(space_id) );
+	    this.getCache().getSpace(space_id).fetch({
+		success : callback
+	    });
 	}
 
     },
@@ -254,6 +286,7 @@ AssemblaApp.Models.Space = Backbone.Model.extend({
 		model : AssemblaApp.Models.Ticket
 	    }) );
 	}
+	this._ticketCache = new AssemblaApp.Collections.Ticket({});
     },
 
     getTickets : function() {
@@ -263,13 +296,26 @@ AssemblaApp.Models.Space = Backbone.Model.extend({
 	return new AssemblaApp.Collections.Ticket();
     },
 
-    withTicket : function (ticket_id, callback ){
-	if( this.getTickets().get(ticket_id) ){
-	    callback = _.bind( callback, this.getTickets().get(ticket_id) );
+    withTicket : function (ticket_number, callback ){
+	if( this.getTickets().where({ number : ticket_number}).length ){
+	    callback = _.bind( callback, this.getTickets().where({ number : ticket_number })[0] );
 	    callback();
+	} else if( this._ticketCache.where({ number : ticket_number}).length ){
+	    callback = _.bind( callback, this._ticketCache.where({ number : ticket_number})[0] );
+	    callback();
+	} else {
+	    var ticket =  new AssemblaApp.Models.Ticket({});
+	    ticket.url = AssemblaApp.getAPIUrl() + '/spaces/' + this.get("id") + '/tickets/' + ticket_number;
+
+	    this._ticketCache.add( ticket );
+	    callback = _.bind(callback, ticket);
+
+	    ticket.fetch({
+		success : callback
+	    });
+
 	}
     }
-
 });
 
 AssemblaApp.Collections.Space = Backbone.Collection.extend({ model: AssemblaApp.Models.Space });

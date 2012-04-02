@@ -35,10 +35,10 @@ AssemblaApp.Views.Spaces_Tab = Backbone.View.extend({
 	    var tmplt = _.template(jQuery("#spaces-tab-space").html() );
             jQuery("#ticket-finder").html( tmplt({ space : space.toJSON() }) );
 
-	    if( space.get("active_tickets").length ){
+	    if( space.getTickets().length ){
 
 		this.ticket_list.setElement("#spaces-tab-ticket-div");
-		this.ticket_list.collection = space.get("active_tickets");
+		this.ticket_list.collection = space.getTickets()
 		this.ticket_list.render();
 
 		jQuery("#spaces-tab-ticket-div").accordion({ collapsible: true,

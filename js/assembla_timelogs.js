@@ -40,10 +40,8 @@ AssemblaApp.Views.Time_Log_Accordion = Backbone.View.extend({
 
 	    this.collection.each( function(tl){
 		AssemblaApp.withSpace( tl.get("space_id"), function(){
-		    console.log("space:foo");
 		    // 'this' referes to the ticket model
-		    this.withTicket( tl.get("ticket_id"), function(){
-			console.log("ticket:foo");
+		    this.withTicket( tl.get("ticket_number"), function(){
 			jQuery(element).find("h3." + tl.get("id") + " span.timelog-name" ).empty()
 			    .html( this.get("number") + ": " + this.get("summary"));
 
