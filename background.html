@@ -168,11 +168,7 @@ var AssemblaApp = {
 
     getBaseUrl : function( uri ){
 	if( !uri ) { uri = ''; }
-
-	if( this.AssemblaAPI.defaults.url ){
-	    return "www.assembla.com/" + uri;
-	}
-
+	return "www.assembla.com/" + uri;
 	return  '';
     },
 
@@ -205,6 +201,8 @@ var AssemblaApp = {
 
     run : function() {
 	this.dispatcher = _.clone(Backbone.Events);
+	this.bootstrapActiveSpaces();
+	this.bootstrapTimeLogs();
     }
 
 };

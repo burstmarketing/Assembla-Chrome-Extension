@@ -108,6 +108,9 @@ AssemblaApp.Views.Ticket_Accordion_Element = Backbone.View.extend({
             t.date_class = (d < current_date) ? "past_due" : '';
         }
 
+	t.space_name = AssemblaApp.getActiveSpaces().get(t.space_id).get('name');
+	t.space_wiki_name = AssemblaApp.getSpaceBaseUrl( AssemblaApp.getActiveSpaces().get(t.space_id).get("wiki_name") );
+
         t.estimate = ( parseInt(this.model.get("estimate")) ) ? this.model.get("estimate") : "";
 
         var tmplt = _.template(jQuery("#ticket-accordion").html() );
