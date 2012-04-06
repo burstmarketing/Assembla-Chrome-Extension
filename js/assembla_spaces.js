@@ -65,7 +65,7 @@ AssemblaApp.Views.Ticket_Tab_Accordion = Backbone.View.extend({
     initialize : function(){
         this._ticketViews = [];
 
-        AssemblaApp.dispatcher.on("bootstrapActiveSpaces:loaded", function () {
+        AssemblaApp.getActiveSpaces().on("change", function () {
 	    this.collection = AssemblaApp.getActiveTickets();
             this.render();
         }, this);
@@ -107,6 +107,7 @@ AssemblaApp.Views.Ticket_Accordion_Element = Backbone.View.extend({
             t.date_string = ( parseInt(d.getUTCMonth()) + 1 ) + "/" + d.getUTCDate() + "/" + d.getUTCFullYear();
             t.date_class = (d < current_date) ? "past_due" : '';
         }
+
 
 	t.space_name = AssemblaApp.getActiveSpaces().get(t.space_id).get('name');
 	t.space_wiki_name = AssemblaApp.getSpaceBaseUrl( AssemblaApp.getActiveSpaces().get(t.space_id).get("wiki_name") );
