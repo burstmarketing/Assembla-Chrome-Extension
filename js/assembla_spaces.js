@@ -101,8 +101,8 @@ AssemblaApp.Views.Ticket_Accordion_Element = Backbone.View.extend({
 
         t.date_string = "";
         t.date_class = "";
-        if( this.model.get("due_date") ){
-            var d = new Date(this.model.get("due_date"));
+        if( this.model.getDueDate() ){
+            var d = new Date(this.model.getDueDate());
             var current_date = new Date();
             t.date_string = ( parseInt(d.getUTCMonth()) + 1 ) + "/" + d.getUTCDate() + "/" + d.getUTCFullYear();
             t.date_class = (d < current_date) ? "past_due" : '';
